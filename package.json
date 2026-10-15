@@ -1,7 +1,7 @@
 {
   "name": "calendar-sync",
   "productName": "Calendar Sync",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tray app that mirrors work calendars (ICS feeds) into a private Google Calendar as detail-free busy blocks.",
   "license": "MIT",
   "author": "Calendar Sync contributors",

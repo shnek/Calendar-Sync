@@ -17,12 +17,31 @@ export function eventKey(sourceId: string, occurrenceKey: string): string {
   return sha(`${sourceId}\n${occurrenceKey}`, 32)
 }
 
-export function toDesired(decision: EventDecision): DesiredEvent {
+/**
+ * Identity of a feed in the target calendar. Source ids are random per install,
+ * so the target is keyed by the feed URL instead: two machines configured with
+ * the same feed then agree on every event id. Only a hash of the (secret) URL
+ * is written to Google.
+ */
+export function feedIdentity(url: string): string {
+  let normalized = url.trim()
+  try {
+    const u = new URL(normalized.replace(/^webcals?:\/\//i, 'https://'))
+    u.hash = ''
+    normalized = u.toString()
+  } catch {
+    // Not a URL - hash it as-is.
+  }
+  return sha(normalized, 16)
+}
+
+/** `identity` is the feed's target-side id (see feedIdentity). */
+export function toDesired(decision: EventDecision, identity: string = decision.event.sourceId): DesiredEvent {
   const { event } = decision
   const visible = { title: decision.title, allDay: event.allDay, start: event.start, end: event.end }
   return {
-    key: eventKey(event.sourceId, event.key),
-    sourceId: event.sourceId,
+    key: eventKey(identity, event.key),
+    sourceId: identity,
     ...visible,
     hash: sha(JSON.stringify([visible.title, visible.allDay, visible.start, visible.end]), 16),
   }

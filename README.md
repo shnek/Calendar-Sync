@@ -24,7 +24,7 @@ Initech (Google) "Focus time"  (skipped) ─┘                               Wo
   - Each run updates the target to match the sources.
   - Edits and cancellations in the source are applied to the target.
   - If a feed fails to download, its events are not deleted.
-  - Running it on two computers does not create duplicates.
+  - Running it on two computers does not create duplicates, as long as both use the same ICS links.
 - **Lives in the tray:** starts at login, syncs every 15 minutes (configurable), catches up after sleep, and shows a notification when something needs attention.
 - **Secrets stay local.** Feed links and Google tokens are encrypted with the OS keychain (DPAPI or Keychain), and no server is involved.
 
@@ -66,7 +66,7 @@ Step-by-step instructions with screenshots-worth of detail: **[docs/SETUP.md](do
 **Tagging and IDs**
 
 - Every event the app writes carries a private tag, and the app only ever lists, changes or deletes events with that tag.
-- Each event's ID is derived from a hash of the source calendar and the occurrence. That's why the diff is deterministic and two machines can't create duplicates.
+- Each event's ID is derived from a hash of the source feed's URL and the occurrence. That's why the diff is deterministic and two machines can't create duplicates.
 
 **What gets synced**
 

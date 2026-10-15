@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { planSync } from '../src/core/sync/planner'
+import { feedIdentity, planSync } from '../src/core/sync/planner'
 import { buildPreview, runSync } from '../src/core/sync/runner'
 import { MemoryTarget } from '../src/core/targets/memory'
 import type { DesiredEvent } from '../src/core/targets/target'
@@ -66,12 +66,27 @@ describe('runSync', () => {
   it('removes events of sources that were disabled or deleted', async () => {
     const target = new MemoryTarget()
     await runSync(testConfig(), target, { now: NOW, fetchImpl: fakeFetch(routes()) })
-    const outlookCount = [...target.events.values()].filter((e) => e.sourceId === OUTLOOK_SOURCE.id).length
+    const outlookCount = [...target.events.values()].filter((e) => e.sourceId === feedIdentity(OUTLOOK_SOURCE.url)).length
 
     const config = testConfig({ sources: [GOOGLE_SOURCE, { ...OUTLOOK_SOURCE, enabled: false }] })
     const report = await runSync(config, target, { now: NOW, fetchImpl: fakeFetch(routes()) })
     expect(report.deleted).toBe(outlookCount)
-    expect([...target.events.values()].every((e) => e.sourceId === GOOGLE_SOURCE.id)).toBe(true)
+    expect([...target.events.values()].every((e) => e.sourceId === feedIdentity(GOOGLE_SOURCE.url))).toBe(true)
+  })
+
+  it('two machines with the same feeds share events instead of replacing each other', async () => {
+    const target = new MemoryTarget()
+    const first = await runSync(testConfig(), target, { now: NOW, fetchImpl: fakeFetch(routes()) })
+
+    // A second install: same feed URLs, but its own random source ids.
+    const other = testConfig({
+      sources: [
+        { ...GOOGLE_SOURCE, id: 'mac-google' },
+        { ...OUTLOOK_SOURCE, id: 'mac-outlook', url: OUTLOOK_SOURCE.url.replace('webcal://', 'https://') },
+      ],
+    })
+    const second = await runSync(other, target, { now: NOW, fetchImpl: fakeFetch(routes()) })
+    expect(second).toMatchObject({ created: 0, updated: 0, deleted: 0, unchanged: first.created })
   })
 
   it('dry run computes the plan without writing', async () => {

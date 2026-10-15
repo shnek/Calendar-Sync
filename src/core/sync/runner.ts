@@ -4,7 +4,7 @@ import { fetchIcs, parseIcs, type FetchOptions } from '../sources/ics'
 import type { CalendarTarget } from '../targets/target'
 import { boundaryMs, resolveTimeZone, systemTimeZone } from '../time'
 import type { AppConfig, EventDecision, PreviewResult, SourceResult, SyncReport } from '../types'
-import { planSync, toDesired } from './planner'
+import { feedIdentity, planSync, toDesired } from './planner'
 
 export interface RunOptions extends FetchOptions {
   now?: Date
@@ -94,13 +94,15 @@ export async function runSync(
   const window = syncWindow(config, now)
   const errors = preview.sources.filter((s) => !s.ok).map((s) => `${s.name}: ${s.error}`)
 
-  const desired = preview.decisions.filter((d) => d.included).map(toDesired)
+  // The target is keyed by feed URL, not by the per-install source id.
+  const identityOf = new Map(config.sources.map((s) => [s.id, feedIdentity(s.url)]))
+  const desired = preview.decisions.filter((d) => d.included).map((d) => toDesired(d, identityOf.get(d.event.sourceId)))
   const existing = await target.listManaged(window)
   const plan = planSync({
     desired,
     existing,
-    syncedSourceIds: new Set(preview.sources.filter((s) => s.ok).map((s) => s.sourceId)),
-    activeSourceIds: new Set(config.sources.filter((s) => s.enabled).map((s) => s.id)),
+    syncedSourceIds: new Set(preview.sources.filter((s) => s.ok).map((s) => identityOf.get(s.sourceId)!)),
+    activeSourceIds: new Set(config.sources.filter((s) => s.enabled).map((s) => identityOf.get(s.id)!)),
   })
 
   const report: SyncReport = {
