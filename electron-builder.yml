@@ -1,0 +1,46 @@
+appId: io.github.calendarsync
+productName: Calendar Sync
+copyright: Copyright © 2026 Calendar Sync contributors
+directories:
+  buildResources: build
+  output: release/${version}
+files:
+  - out/**
+  - package.json
+  - resources/**
+  - '!**/*.map'
+asarUnpack:
+  - resources/**
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  executableName: calendar-sync
+nsis:
+  oneClick: true
+  perMachine: false
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: Calendar Sync
+  uninstallDisplayName: Calendar Sync
+  createDesktopShortcut: false
+  deleteAppDataOnUninstall: false
+
+mac:
+  target:
+    - target: dmg
+      arch: universal
+    - target: zip
+      arch: universal
+  category: public.app-category.productivity
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  extendInfo:
+    LSUIElement: true
+dmg:
+  artifactName: ${name}-${version}-mac.${ext}
+
+linux:
+  target: [AppImage]
+  category: Office

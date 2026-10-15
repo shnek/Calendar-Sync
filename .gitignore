@@ -1,0 +1,16 @@
+node_modules/
+out/
+dist/
+release/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+# CLI config contains secrets (feed URLs, OAuth tokens)
+calendar-sync.config.json
+*.config.local.json
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsconfig.web.tsbuildinfo"
+  },
+  "include": [
+    "src/renderer/**/*",
+    "src/shared/**/*",
+    "src/core/types.ts",
+    "src/core/config.ts",
+    "src/core/time.ts",
+    "src/core/rules/**/*",
+    "src/preload/*.d.ts"
+  ]
+}
