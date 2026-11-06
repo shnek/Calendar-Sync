@@ -3,6 +3,8 @@ title: Silhouette
 permalink: /
 ---
 
+<img src="logo.png" alt="Silhouette logo" width="96" height="96">
+
 # Silhouette
 
 Silhouette is a free, open-source desktop app for Windows and macOS. It reads your work calendars through their private ICS links and copies them into a Google Calendar you own. Each meeting becomes a plain busy block, such as `Work - Acme`, with no meeting details.

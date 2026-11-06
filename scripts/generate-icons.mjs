@@ -53,9 +53,30 @@ const roundBox = (cx, cy, hx, hy, r) => (x, y) => {
 }
 const circle = (cx, cy, r) => (x, y) => Math.hypot(x - cx, y - cy) - r
 const intersect = (a, b) => (x, y) => Math.max(a(x, y), b(x, y))
+const union =
+  (...shapes) =>
+  (x, y) =>
+    Math.min(...shapes.map((f) => f(x, y)))
+/** Half-plane, negative where x*nx + y*ny < d (with n normalised). */
+const halfPlane = (nx, ny, d) => {
+  const len = Math.hypot(nx, ny)
+  return (x, y) => (x * nx + y * ny) / len - d
+}
 const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]
+/** Vertical linear gradient from `top` (y = y0) to `bottom` (y = y1). */
+const verticalGradient = (top, bottom, y0 = 0.05, y1 = 0.95) => {
+  const a = hex(top)
+  const b = hex(bottom)
+  return (x, y) => {
+    const t = Math.min(1, Math.max(0, (y - y0) / (y1 - y0)))
+    return a.map((v, i) => v + (b[i] - v) * t)
+  }
+}
 
-/** layers: [{ sdf, color: '#rrggbb' } | { sdf, erase: true }] painted in order. */
+/**
+ * layers: [{ sdf, color: '#rrggbb' | (x, y) => [r, g, b] } | { sdf, erase: true }]
+ * painted in order.
+ */
 function render(size, layers) {
   const out = Buffer.alloc(size * size * 4)
   const px = 1 / size
@@ -74,7 +95,7 @@ function render(size, layers) {
           a *= 1 - cov
           continue
         }
-        const [lr, lg, lb] = hex(layer.color)
+        const [lr, lg, lb] = typeof layer.color === 'function' ? layer.color(x, y) : hex(layer.color)
         const na = cov + a * (1 - cov)
         r = (lr * cov + r * a * (1 - cov)) / na
         g = (lg * cov + g * a * (1 - cov)) / na
@@ -91,41 +112,58 @@ function render(size, layers) {
   return out
 }
 
-const BLUE = '#2563EB'
-const NAVY = '#1E3A8A'
-const SKY = '#BFDBFE'
+// ---- Silhouette mark ---------------------------------------------------------
+// A calendar page cut diagonally: the left half shows event details, the right
+// half shows the same events as plain shapes - what the app does to a calendar.
+const INDIGO_LIGHT = '#818CF8'
+const INDIGO = '#4338CA'
+const INK = '#312E81' // header, and events in silhouette
+const SHADOW = '#1E1B4B' // the silhouetted half of the page
 const WHITE = '#FFFFFF'
+const AMBER = '#F59E0B'
+const GREEN = '#10B981'
 const RED = '#DC2626'
 
+/** Splits a shape along a diagonal through (cx, cy): [detailed half, silhouetted half]. */
+const splitAt = (cx, cy) => {
+  const cut = halfPlane(1, 0.35, (cx + 0.35 * cy) / Math.hypot(1, 0.35))
+  return [(s) => intersect(s, cut), (s) => intersect(s, (x, y) => -cut(x, y))]
+}
+
 function appIconLayers() {
-  const body = roundBox(0.5, 0.56, 0.3, 0.27, 0.06)
-  const cells = []
-  const cols = [0.355, 0.5, 0.645]
-  const rows = [0.55, 0.69]
-  rows.forEach((cy, ri) =>
-    cols.forEach((cx, ci) => {
-      const busy = (ri === 0 && ci === 1) || (ri === 1 && ci === 0)
-      cells.push({ sdf: roundBox(cx, cy, 0.06, 0.05, 0.018), color: busy ? BLUE : SKY })
-    }),
-  )
+  const page = roundBox(0.5, 0.56, 0.29, 0.27, 0.06)
+  const [detail, shadow] = splitAt(0.541, 0.56)
+  const header = intersect(page, roundBox(0.5, 0.37, 0.3, 0.08, 0))
+  const event1 = roundBox(0.43, 0.55, 0.15, 0.045, 0.02)
+  const event2 = roundBox(0.57, 0.68, 0.15, 0.045, 0.02)
+  const textLines = union(roundBox(0.38, 0.55, 0.07, 0.008, 0.004), roundBox(0.5, 0.68, 0.06, 0.008, 0.004))
+  const rings = union(roundBox(0.38, 0.29, 0.028, 0.065, 0.028), roundBox(0.62, 0.29, 0.028, 0.065, 0.028))
   return [
-    { sdf: roundBox(0.5, 0.5, 0.45, 0.45, 0.2), color: BLUE },
-    { sdf: body, color: WHITE },
-    { sdf: intersect(body, roundBox(0.5, 0.36, 0.31, 0.07, 0)), color: NAVY },
-    { sdf: roundBox(0.38, 0.27, 0.026, 0.06, 0.026), color: WHITE },
-    { sdf: roundBox(0.62, 0.27, 0.026, 0.06, 0.026), color: WHITE },
-    ...cells,
+    { sdf: roundBox(0.5, 0.5, 0.45, 0.45, 0.2), color: verticalGradient(INDIGO_LIGHT, INDIGO) },
+    { sdf: detail(page), color: WHITE },
+    { sdf: detail(header), color: INK },
+    { sdf: detail(event1), color: AMBER },
+    { sdf: detail(event2), color: GREEN },
+    { sdf: detail(textLines), color: WHITE },
+    { sdf: shadow(page), color: SHADOW },
+    { sdf: shadow(union(event1, event2)), color: INK },
+    { sdf: rings, color: WHITE },
   ]
 }
 
+/** Windows/Linux tray: same mark, simplified to read at 16px. */
 function trayLayers({ error }) {
-  const body = roundBox(0.5, 0.56, 0.34, 0.32, 0.08)
+  const page = roundBox(0.5, 0.56, 0.36, 0.33, 0.08)
+  const [detail, shadow] = splitAt(0.53, 0.56)
+  const header = intersect(page, roundBox(0.5, 0.31, 0.37, 0.09, 0))
+  const event = roundBox(0.5, 0.62, 0.24, 0.1, 0.04)
   const layers = [
-    { sdf: roundBox(0.5, 0.5, 0.48, 0.48, 0.16), color: BLUE },
-    { sdf: body, color: WHITE },
-    { sdf: intersect(body, roundBox(0.5, 0.33, 0.36, 0.09, 0)), color: NAVY },
-    { sdf: roundBox(0.36, 0.6, 0.09, 0.09, 0.03), color: BLUE },
-    { sdf: roundBox(0.64, 0.6, 0.09, 0.09, 0.03), color: SKY },
+    { sdf: roundBox(0.5, 0.5, 0.48, 0.48, 0.16), color: verticalGradient(INDIGO_LIGHT, INDIGO, 0, 1) },
+    { sdf: detail(page), color: WHITE },
+    { sdf: detail(header), color: INK },
+    { sdf: detail(event), color: AMBER },
+    { sdf: shadow(page), color: SHADOW },
+    { sdf: shadow(event), color: INK },
   ]
   if (error) {
     layers.push({ sdf: circle(0.78, 0.78, 0.24), erase: true })
@@ -134,13 +172,15 @@ function trayLayers({ error }) {
   return layers
 }
 
-/** macOS template image: black glyph + alpha; the system tints it. */
+/** macOS template image: black glyph + alpha; the system tints it. Hollow page on the left, solid on the right. */
 function templateLayers() {
-  const body = roundBox(0.5, 0.55, 0.4, 0.37, 0.09)
+  const page = roundBox(0.5, 0.55, 0.4, 0.37, 0.09)
+  const inside = roundBox(0.5, 0.62, 0.3, 0.22, 0.04)
+  const [detail] = splitAt(0.52, 0.6)
   return [
-    { sdf: body, color: '#000000' },
-    { sdf: roundBox(0.5, 0.62, 0.32, 0.22, 0.04), erase: true },
-    { sdf: roundBox(0.34, 0.58, 0.09, 0.09, 0.03), color: '#000000' },
+    { sdf: page, color: '#000000' },
+    { sdf: detail(inside), erase: true },
+    { sdf: intersect(roundBox(0.36, 0.58, 0.1, 0.07, 0.03), detail(page)), color: '#000000' },
     { sdf: roundBox(0.32, 0.17, 0.05, 0.1, 0.05), color: '#000000' },
     { sdf: roundBox(0.68, 0.17, 0.05, 0.1, 0.05), color: '#000000' },
   ]
@@ -155,6 +195,8 @@ function write(relPath, size, layers) {
 
 write('build/icon.png', 1024, appIconLayers())
 write('resources/icon.png', 256, appIconLayers())
+// Used by the GitHub Pages site (docs/).
+write('docs/logo.png', 256, appIconLayers())
 for (const [suffix, size] of [
   ['', 16],
   ['@2x', 32],
