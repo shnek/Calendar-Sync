@@ -1,6 +1,6 @@
 appId: io.github.calendarsync
-productName: Calendar Sync
-copyright: Copyright © 2026 Calendar Sync contributors
+productName: Silhouette
+copyright: Copyright © 2026 Silhouette contributors
 directories:
   buildResources: build
   output: release/${version}
@@ -17,13 +17,13 @@ win:
   target:
     - target: nsis
       arch: [x64]
-  executableName: calendar-sync
+  executableName: silhouette
 nsis:
   oneClick: true
   perMachine: false
   artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: Calendar Sync
-  uninstallDisplayName: Calendar Sync
+  shortcutName: Silhouette
+  uninstallDisplayName: Silhouette
   createDesktopShortcut: false
   deleteAppDataOnUninstall: false
 

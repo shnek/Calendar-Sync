@@ -1,10 +1,10 @@
 {
-  "name": "calendar-sync",
-  "productName": "Calendar Sync",
+  "name": "silhouette",
+  "productName": "Silhouette",
   "version": "0.1.1",
   "description": "Tray app that mirrors work calendars (ICS feeds) into a private Google Calendar as detail-free busy blocks.",
   "license": "MIT",
-  "author": "Calendar Sync contributors",
+  "author": "Silhouette contributors",
   "main": "./out/main/index.js",
   "private": true,
   "type": "commonjs",

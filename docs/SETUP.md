@@ -1,6 +1,6 @@
 # Setup guide
 
-This guide walks you through setting up Calendar Sync once.
+This guide walks you through setting up Silhouette once.
 
 1. [Get the ICS link for each work calendar](#1-work-calendar-ics-links)
 2. [Create a Google OAuth client](#google-oauth-client) (skip this if your build includes one)
@@ -9,7 +9,7 @@ This guide walks you through setting up Calendar Sync once.
 
 ## 1. Work calendar ICS links
 
-Each work calendar is read through its private ICS ("iCal") link. Anyone who has the link can read that calendar, so **treat it like a password**. Calendar Sync stores it encrypted.
+Each work calendar is read through its private ICS ("iCal") link. Anyone who has the link can read that calendar, so **treat it like a password**. Silhouette stores it encrypted.
 
 ### Google Workspace calendar
 
@@ -25,7 +25,7 @@ If you don't see "Secret address", your Workspace admin has turned off external 
 1. Open Outlook on the web (outlook.office.com) with your work account.
 2. Go to ⚙ **Settings → Calendar → Shared calendars**.
 3. Under **Publish a calendar**, choose the calendar and a permission level:
-   - **"Can view all details"** lets Calendar Sync read titles, so your title-based rules work.
+   - **"Can view all details"** lets Silhouette read titles, so your title-based rules work.
    - **"Can view titles and locations"** also works.
    - **"Can view when I'm busy"** works too, but every event then has the same title, so title rules won't match.
 4. Click **Publish** and copy the **ICS** link (not the HTML one).
@@ -46,39 +46,47 @@ Click **Test link** to check that the feed loads. For Google feeds, your email i
 
 ## 2. Google OAuth client
 
-Calendar Sync talks to Google Calendar through an OAuth client that **you** own, so nothing passes through anyone else's server. This takes about five minutes and is free.
+Silhouette talks to Google Calendar through an OAuth client that **you** own, so nothing passes through anyone else's server. This takes about five minutes and is free.
 
-1. Open the [Google Cloud console](https://console.cloud.google.com/projectcreate) and create a project, for example "Calendar Sync". Use your **personal** Google account.
+1. Open the [Google Cloud console](https://console.cloud.google.com/projectcreate) and create a project, for example "Silhouette". Use your **personal** Google account.
 2. Enable the [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) for that project.
 3. Open [Google Auth Platform → Branding / Overview](https://console.cloud.google.com/auth/overview) and click **Get started**:
-   - App name: `Calendar Sync`. Support email: your address.
+   - App name: `Silhouette`. Support email: your address.
    - Audience: **External**.
    - Contact email: your address. Agree and **Create**.
-4. Go to **Audience** and click **Publish app**, then confirm.
+4. If Google asks you to finish branding before publishing, open **Branding** and fill in:
+   - App name: `Silhouette`.
+   - Application home page: `https://shnek.github.io/Calendar-Sync/`
+   - Privacy policy: `https://shnek.github.io/Calendar-Sync/privacy/`
+   - Terms of service: `https://shnek.github.io/Calendar-Sync/terms/`
+   - Authorized domain: `shnek.github.io`
+   - Developer contact: your address.
+   - **Don't upload a logo.** A logo makes Google require verification before the app can be published.
+5. Go to **Audience** and click **Publish app**, then confirm.
    - This matters. While the app is in _Testing_, Google expires your sign-in every 7 days.
    - Publishing doesn't make anything public. It only lifts that limit.
    - You don't need to submit the app for verification.
-5. Go to [Clients](https://console.cloud.google.com/auth/clients) → **Create client** and set:
+6. Go to [Clients](https://console.cloud.google.com/auth/clients) → **Create client** and set:
    - Application type: **Desktop app**.
    - Name: anything.
-6. Copy the **Client ID** and **Client secret** into the app under **Google calendar → OAuth client**, then click **Save client**.
+7. Copy the **Client ID** and **Client secret** into the app under **Google calendar → OAuth client**, then click **Save client**.
 
 > **Is the client secret really secret?** For desktop apps, no. Google documents that installed apps can't keep a secret, and security comes from the redirect to your own machine plus PKCE. It is still stored encrypted.
 
 ### Permission level
 
-| Setting                                               | Scope                                            | Use when                                                  |
-| ----------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------- |
-| **Only calendars created by Calendar Sync** (default) | `calendar.app.created` + read-only calendar list | You let the app create a dedicated calendar. Recommended. |
-| **All my calendars**                                  | `calendar`                                       | You want to sync into a calendar you already have.        |
+| Setting                                            | Scope                                            | Use when                                                  |
+| -------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------- |
+| **Only calendars created by Silhouette** (default) | `calendar.app.created` + read-only calendar list | You let the app create a dedicated calendar. Recommended. |
+| **All my calendars**                               | `calendar`                                       | You want to sync into a calendar you already have.        |
 
-In both modes Calendar Sync only edits events it created itself. These are identified by a private tag.
+In both modes Silhouette only edits events it created itself. These are identified by a private tag.
 
 ## 3. Connect Google and create the target calendar
 
 1. Click **Connect Google account**. Your browser opens, and you sign in with the **personal** account.
-2. Google warns _"Google hasn't verified this app"_. That's expected because it's your own client. Click **Advanced → Go to Calendar Sync (unsafe)**, then **Continue**.
-3. On the next screen, **tick every checkbox** ("Select all"). Google lists each permission separately, and Calendar Sync needs all of them. If you leave any unticked, the app refuses the sign-in and asks you to try again.
+2. Google warns _"Google hasn't verified this app"_. That's expected because it's your own client. Click **Advanced → Go to Silhouette (unsafe)**, then **Continue**.
+3. On the next screen, **tick every checkbox** ("Select all"). Google lists each permission separately, and Silhouette needs all of them. If you leave any unticked, the app refuses the sign-in and asks you to try again.
 4. Back in the app, under **Target calendar**, click **Create** to make a calendar called "Work", or choose one you already have.
 5. Optionally, change the **title template**. You can use these placeholders:
    - `{project}`: the project or client name of the source
@@ -111,7 +119,7 @@ Use **Preview** to see every upcoming event, whether it syncs, and which rule sk
 
 - **"Google sign-in expired or was revoked"**
   - Reconnect on the Google calendar page.
-  - If it happens every week, your OAuth app is still in _Testing_. See step 2.4.
+  - If it happens every week, your OAuth app is still in _Testing_. See step 2.5.
 - **A feed shows "HTTP 401/403/404"**
   - The secret link was reset or publishing was turned off. Copy a fresh link.
 - **"Response is not an iCalendar feed"**
@@ -124,7 +132,7 @@ Use **Preview** to see every upcoming event, whether it syncs, and which rule sk
     - Windows: `%APPDATA%\Calendar Sync\logs`
     - macOS: `~/Library/Application Support/Calendar Sync/logs`
 
-## Removing Calendar Sync
+## Removing Silhouette
 
 1. Delete the target calendar in Google Calendar. That removes every synced event.
 2. Revoke the app at [myaccount.google.com/permissions](https://myaccount.google.com/permissions).

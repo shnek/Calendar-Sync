@@ -23,7 +23,9 @@ const option = (name: string) => {
 }
 const positional = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1] === '--config'))
 const command = positional[0] ?? 'help'
-const configPath = resolve(option('config') ?? 'calendar-sync.config.json')
+// Fall back to the pre-rename file name so existing CLI setups keep working.
+const defaultConfigPath = existsSync('calendar-sync.config.json') ? 'calendar-sync.config.json' : 'silhouette.config.json'
+const configPath = resolve(option('config') ?? defaultConfigPath)
 
 function load(): AppConfig {
   if (!existsSync(configPath)) {

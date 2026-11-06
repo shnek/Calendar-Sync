@@ -30,7 +30,7 @@ export function showWindow(page?: string): BrowserWindow {
     minWidth: 760,
     minHeight: 560,
     show: false,
-    title: 'Calendar Sync',
+    title: 'Silhouette',
     icon,
     autoHideMenuBar: true,
     backgroundColor: '#f8fafc',

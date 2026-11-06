@@ -68,7 +68,7 @@ export function App() {
       <nav className="sidebar" aria-label="Sections">
         <div className="brand">
           <span className={`brand-dot ${status.state}`} title={status.message} />
-          Calendar Sync
+          Silhouette
         </div>
         {PAGES.map((p) => (
           <button

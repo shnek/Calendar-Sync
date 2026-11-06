@@ -8,6 +8,7 @@ coverage/
 .env.*
 !.env.example
 # CLI config contains secrets (feed URLs, OAuth tokens)
+silhouette.config.json
 calendar-sync.config.json
 *.config.local.json
 .DS_Store

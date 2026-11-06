@@ -16,6 +16,15 @@ const builtInClient = {
   clientSecret: import.meta.env.MAIN_VITE_GOOGLE_CLIENT_SECRET || undefined,
 }
 
+// The app was renamed from "Calendar Sync" to "Silhouette". Electron derives
+// the settings folder and the macOS keychain entry that encrypts secrets
+// ("<name> Safe Storage") from the app name, so pin both to the old name -
+// otherwise existing installs lose their feeds and Google sign-in. Must run
+// before anything touches userData, including the single-instance lock.
+const LEGACY_APP_NAME = 'Calendar Sync'
+app.setName(LEGACY_APP_NAME)
+app.setPath('userData', join(app.getPath('appData'), LEGACY_APP_NAME))
+
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 } else {
@@ -34,7 +43,7 @@ function start(): void {
   const store = new ConfigStore(join(app.getPath('userData'), 'config.json'))
   const service = new SyncService(store, logger, builtInClient, app.getVersion())
   const updater = new Updater(logger)
-  logger.info(`Calendar Sync ${app.getVersion()} starting`)
+  logger.info(`Silhouette ${app.getVersion()} starting`)
 
   const applyAppSettings = (config: AppConfig) => {
     if (app.isPackaged) {
@@ -61,7 +70,7 @@ function start(): void {
         }),
       )
     },
-    checkForUpdates: () => void updater.check().then((msg) => new Notification({ title: 'Calendar Sync', body: msg }).show()),
+    checkForUpdates: () => void updater.check().then((msg) => new Notification({ title: 'Silhouette', body: msg }).show()),
     quit: () => app.quit(),
     isAutoSync: () => store.get().sync.autoSync,
     isLaunchAtLogin: () => store.get().app.launchAtLogin,
@@ -73,7 +82,7 @@ function start(): void {
   service.on('status', (status) => tray?.update(status))
   service.on('failure', (message: string) => {
     if (!Notification.isSupported()) return
-    const n = new Notification({ title: 'Calendar Sync needs attention', body: message })
+    const n = new Notification({ title: 'Silhouette needs attention', body: message })
     n.on('click', () => showWindow('activity'))
     n.show()
   })

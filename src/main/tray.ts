@@ -47,7 +47,7 @@ export class AppTray {
 
   constructor(private readonly actions: TrayActions) {
     this.tray = new Tray(this.icons.normal)
-    this.tray.setToolTip('Calendar Sync')
+    this.tray.setToolTip('Silhouette')
     // On Windows a left click opens the window; the menu is on right click.
     if (!isMac) this.tray.on('click', () => actions.openSettings())
     this.render()
@@ -68,7 +68,7 @@ export class AppTray {
     this.tray.setImage(failing ? this.icons.error : this.icons.normal)
     if (isMac) this.tray.setTitle(failing ? '!' : '')
     const statusLine = s ? (s.state === 'syncing' ? 'Syncing…' : s.message) : 'Starting…'
-    this.tray.setToolTip(`Calendar Sync - ${statusLine}`)
+    this.tray.setToolTip(`Silhouette - ${statusLine}`)
 
     const a = this.actions
     const menu = Menu.buildFromTemplate([
@@ -86,7 +86,7 @@ export class AppTray {
       ...(a.canUpdate() ? [{ label: 'Check for updates', click: () => a.checkForUpdates() }] : []),
       { label: `Version ${s?.version ?? ''}`, enabled: false },
       { type: 'separator' },
-      { label: 'Quit Calendar Sync', click: () => a.quit() },
+      { label: 'Quit Silhouette', click: () => a.quit() },
     ])
     this.tray.setContextMenu(menu)
   }

@@ -61,7 +61,10 @@ jobs:
 
       - name: Package & upload to draft release
         shell: bash
+        # electron-builder treats an empty CSC_LINK as a file path and fails, so
+        # drop the signing variables entirely when no certificate is configured.
         run: >-
+          if [ -z "$CSC_LINK" ]; then unset CSC_LINK CSC_KEY_PASSWORD; fi;
           npx electron-builder ${{ matrix.target }} --publish always
           -c.publish.provider=github
           -c.publish.owner=${{ github.repository_owner }}

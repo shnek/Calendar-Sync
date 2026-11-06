@@ -1,4 +1,4 @@
-# Calendar Sync
+# Silhouette
 
 A small tray app for Windows and macOS that copies your **work calendars** (Google Workspace, Outlook / Microsoft 365, or any ICS feed) into **one private Google Calendar** as detail-free busy blocks. You can share that calendar with family, so they can see when you're in meetings without seeing what the meetings are about.
 
@@ -32,17 +32,17 @@ Initech (Google) "Focus time"  (skipped) ─┘                               Wo
 
 Download the latest installer from the [Releases](../../releases) page:
 
-| Platform | File                                                                                                |
-| -------- | --------------------------------------------------------------------------------------------------- |
-| Windows  | `calendar-sync-<version>-setup.exe`                                                                 |
-| macOS    | `calendar-sync-<version>-mac.dmg` (universal: Apple Silicon + Intel). Drag the app to Applications. |
+| Platform | File                                                                                             |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| Windows  | `silhouette-<version>-setup.exe`                                                                 |
+| macOS    | `silhouette-<version>-mac.dmg` (universal: Apple Silicon + Intel). Drag the app to Applications. |
 
 Builds are currently **unsigned**, so each OS warns the first time you open the app:
 
 - **Windows SmartScreen:** click "More info", then "Run anyway".
 - **macOS:**
   1. Right-click the app and choose "Open", then click "Open" again.
-  2. If that doesn't work, run `xattr -dr com.apple.quarantine "/Applications/Calendar Sync.app"`.
+  2. If that doesn't work, run `xattr -dr com.apple.quarantine "/Applications/Silhouette.app"`.
 
 ## Setup (about 10 minutes)
 
@@ -100,7 +100,7 @@ npm run lint && npm run typecheck
 **Headless CLI** (same engine; useful for debugging feeds and rules):
 
 ```bash
-npm run cli -- init                 # writes calendar-sync.config.json (git-ignored, unencrypted)
+npm run cli -- init                 # writes silhouette.config.json (git-ignored, unencrypted)
 npm run cli -- preview              # what would sync, and which rule skips what
 npm run cli -- auth                 # connect Google
 npm run cli -- create-calendar Work
@@ -150,7 +150,7 @@ Optional repository secrets:
 
 ## Privacy
 
-Calendar Sync has no backend and collects no telemetry. The only data that leaves your machine:
+Silhouette has no backend and collects no telemetry. The only data that leaves your machine:
 
 - requests to your ICS feed URLs
 - calls to the Google Calendar API, carrying the minimal events described above

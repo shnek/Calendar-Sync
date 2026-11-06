@@ -18,7 +18,7 @@ export function scopesFor(mode: GoogleScopeMode): string[] {
 }
 
 export const MISSING_SCOPES_MESSAGE =
-  'Calendar Sync was not given permission to manage your calendars. Connect again and tick every checkbox on the Google permission screen.'
+  'Silhouette was not given permission to manage your calendars. Connect again and tick every checkbox on the Google permission screen.'
 
 /**
  * Returns the requested calendar scopes that Google did not grant. `granted` is
@@ -49,11 +49,11 @@ export interface AuthorizeResult {
   email?: string
 }
 
-const SUCCESS_PAGE = `<!doctype html><meta charset="utf-8"><title>Calendar Sync</title>
+const SUCCESS_PAGE = `<!doctype html><meta charset="utf-8"><title>Silhouette</title>
 <body style="font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0">
-<div style="text-align:center"><h2>Calendar Sync is connected</h2><p>You can close this tab and return to the app.</p></div>`
+<div style="text-align:center"><h2>Silhouette is connected</h2><p>You can close this tab and return to the app.</p></div>`
 
-const failurePage = (message: string) => `<!doctype html><meta charset="utf-8"><title>Calendar Sync</title>
+const failurePage = (message: string) => `<!doctype html><meta charset="utf-8"><title>Silhouette</title>
 <body style="font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0">
 <div style="text-align:center"><h2>Sign-in failed</h2><p>${message.replace(/[<>&"]/g, '')}</p></div>`
 

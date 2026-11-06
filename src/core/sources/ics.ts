@@ -20,7 +20,7 @@ export async function fetchIcs(url: string, options: FetchOptions = {}): Promise
   try {
     res = await fetchImpl(normalized, {
       signal: AbortSignal.timeout(timeoutMs),
-      headers: { 'User-Agent': 'calendar-sync', Accept: 'text/calendar, */*' },
+      headers: { 'User-Agent': 'silhouette', Accept: 'text/calendar, */*' },
       redirect: 'follow',
     })
   } catch (err) {

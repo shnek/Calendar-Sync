@@ -12,7 +12,7 @@ export class Logger {
 
   constructor(readonly dir: string) {
     mkdirSync(dir, { recursive: true })
-    this.file = join(dir, 'calendar-sync.log')
+    this.file = join(dir, 'silhouette.log')
   }
 
   info(message: string): void {

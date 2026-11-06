@@ -1,6 +1,10 @@
 import type { SyncWindow } from '../types'
 
-/** Tag written into every event we create, so we only ever touch our own events. */
+/**
+ * Tag written into every event we create, so we only ever touch our own events.
+ * Deliberately kept from the app's old name (Calendar Sync): changing it would
+ * orphan every event already in users' calendars and duplicate them on next sync.
+ */
 export const APP_TAG = 'calendar-sync'
 
 /** An event as it should exist in the target calendar. */

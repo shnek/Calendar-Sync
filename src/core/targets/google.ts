@@ -32,10 +32,10 @@ export function describeGoogleError(err: unknown): string {
   const message = (typeof data === 'object' && data?.message) || e?.message || String(err)
   if (status === 404) return `Google calendar not found (${message})`
   if (status === 403 && (reasonOf(err) === 'insufficientPermissions' || /insufficient authentication scopes/i.test(message))) {
-    return 'Calendar Sync is missing permission to manage your calendars - disconnect your Google account, connect again, and tick every checkbox on the Google permission screen'
+    return 'Silhouette is missing permission to manage your calendars - disconnect your Google account, connect again, and tick every checkbox on the Google permission screen'
   }
   if (status === 403 && reasonOf(err) === 'forbidden') {
-    return 'Google denied access to this calendar - with the default permission level, only calendars created by Calendar Sync can be written'
+    return 'Google denied access to this calendar - with the default permission level, only calendars created by Silhouette can be written'
   }
   return status ? `Google API error ${status}: ${message}` : message
 }
@@ -94,7 +94,7 @@ export class GoogleCalendarApi {
         requestBody: {
           summary,
           timeZone,
-          description: 'Busy blocks mirrored from work calendars by Calendar Sync. Events here are managed automatically.',
+          description: 'Busy blocks mirrored from work calendars by Silhouette. Events here are managed automatically.',
         },
       }),
     )

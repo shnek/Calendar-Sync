@@ -1,0 +1,5 @@
+# GitHub Pages site (Settings → Pages → Deploy from branch → main, /docs).
+# Hosts the home page, privacy policy and terms linked from the Google OAuth
+# consent screen.
+title: Silhouette
+description: Mirror your work calendars into a private Google Calendar as detail-free busy blocks.

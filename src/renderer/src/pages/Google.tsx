@@ -75,7 +75,7 @@ function ClientCard({ config, save, usingBuiltIn }: Pick<PageProps, 'config' | '
               ? 'Using the OAuth client built into this release.'
               : g.clientId
                 ? `Using your own client (${g.clientId.slice(0, 12)}…)`
-                : 'Calendar Sync needs a Google OAuth "Desktop app" client to talk to Google Calendar.'}
+                : 'Silhouette needs a Google OAuth "Desktop app" client to talk to Google Calendar.'}
           </div>
         </div>
         {!open && (
@@ -129,12 +129,12 @@ function ClientCard({ config, save, usingBuiltIn }: Pick<PageProps, 'config' | '
             label="Permission level"
             hint={
               scopeMode === 'app-created'
-                ? 'Recommended. Calendar Sync can only change calendars it created itself, so it can never touch your other calendars.'
-                : 'Lets you sync into an existing calendar (e.g. your main one). Calendar Sync still only edits events it created.'
+                ? 'Recommended. Silhouette can only change calendars it created itself, so it can never touch your other calendars.'
+                : 'Lets you sync into an existing calendar (e.g. your main one). Silhouette still only edits events it created.'
             }
           >
             <select value={scopeMode} onChange={(e) => setScopeMode(e.target.value as GoogleScopeMode)}>
-              <option value="app-created">Only calendars created by Calendar Sync</option>
+              <option value="app-created">Only calendars created by Silhouette</option>
               <option value="full">All my calendars</option>
             </select>
           </Field>
@@ -209,7 +209,7 @@ function AccountCard({ config, setConfig }: Pick<PageProps, 'config' | 'setConfi
       {action.busy && !g.connected && (
         <p className="hint">
           Finish signing in in your browser. If Google warns that the app isn't verified, choose "Advanced" → "Go to … (unsafe)" - it's your
-          own OAuth client. On the permissions screen, tick every checkbox - Calendar Sync needs all of them.
+          own OAuth client. On the permissions screen, tick every checkbox - Silhouette needs all of them.
         </p>
       )}
       {action.error && <Banner kind="err">{action.error}</Banner>}
@@ -237,7 +237,7 @@ function CalendarCard({ config, setConfig }: Pick<PageProps, 'config' | 'setConf
         </p>
       ) : (
         <p className="hint" style={{ marginTop: 0 }}>
-          A dedicated calendar is recommended - it's the one you share, and removing it removes everything Calendar Sync created.
+          A dedicated calendar is recommended - it's the one you share, and removing it removes everything Silhouette created.
         </p>
       )}
       <div className="grid2">
@@ -251,7 +251,7 @@ function CalendarCard({ config, setConfig }: Pick<PageProps, 'config' | 'setConf
         </Field>
         <Field
           label="…or use an existing one"
-          hint={appCreated ? 'With the default permission level, only calendars created by Calendar Sync can be used.' : undefined}
+          hint={appCreated ? 'With the default permission level, only calendars created by Silhouette can be used.' : undefined}
         >
           {calendars ? (
             <div className="row" style={{ flexWrap: 'nowrap' }}>

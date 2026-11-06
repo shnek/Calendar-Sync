@@ -79,8 +79,8 @@ export function SettingsPage({ config, status, save }: PageProps) {
           </datalist>
         </Field>
         <Banner kind="info">
-          Using Calendar Sync on more than one computer is safe - events are never duplicated - but it's simplest to keep automatic sync on
-          for just one of them.
+          Using Silhouette on more than one computer is safe - events are never duplicated - but it's simplest to keep automatic sync on for
+          just one of them.
         </Banner>
         <div className="row" style={{ justifyContent: 'flex-end' }}>
           <button disabled={!dirty} onClick={() => setSync(config.sync)}>
@@ -94,11 +94,7 @@ export function SettingsPage({ config, status, save }: PageProps) {
 
       <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <h2>Application</h2>
-        <Switch
-          checked={config.app.launchAtLogin}
-          onChange={(v) => setApp({ launchAtLogin: v })}
-          label="Start Calendar Sync when I log in"
-        />
+        <Switch checked={config.app.launchAtLogin} onChange={(v) => setApp({ launchAtLogin: v })} label="Start Silhouette when I log in" />
         <Switch checked={config.app.autoUpdate} onChange={(v) => setApp({ autoUpdate: v })} label="Install updates automatically" />
         <div className="row">
           <button
