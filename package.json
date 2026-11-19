@@ -9,9 +9,9 @@
   "private": true,
   "type": "commonjs",
   "dependencies": {
-    "@googleapis/calendar": "^20.1.0",
-    "electron-updater": "^6.8.9",
-    "google-auth-library": "^11.2.0",
+    "@googleapis/calendar": "^20.2.0",
+    "electron-updater": "^6.8.11",
+    "google-auth-library": "^11.3.4",
     "ical.js": "^2.2.1"
   },
   "devDependencies": {
